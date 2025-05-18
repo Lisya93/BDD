@@ -19,10 +19,10 @@ public class DashboardPage {
     }
 
     public int extractBalance(String text) {
-
-        val start = text.indexOf(balanceStart);
-        val finish = text.lastIndexOf(balanceFinish);
-        val value = text.substring(start + balanceStart.length(), finish);
+        String cardValue = cards.get(Integer.parseInt(text)).text();
+        val start = cardValue.indexOf(balanceStart);
+        val finish = cardValue.lastIndexOf(balanceFinish);
+        val value  = cardValue.substring(start + balanceStart.length(), finish).trim();
         return Integer.parseInt(value);
     }
 
