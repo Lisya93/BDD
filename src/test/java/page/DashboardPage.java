@@ -12,17 +12,17 @@ public class DashboardPage {
     private ElementsCollection cards = $$(".list__item div");
     private String button = "[data-test-id=action-deposit]";
     private String balanceStart = "баланс:";
-    private String balanceFinish  = " р.";
+    private String balanceFinish = " р.";
 
     public DashboardPage() {
         header.shouldBe(visible);
     }
 
     public int extractBalance(String text) {
-        String cardValue = cards.get(Integer.parseInt(text)).text();
-        val start = cardValue.indexOf(balanceStart);
-        val finish = cardValue.lastIndexOf(balanceFinish);
-        val value  = cardValue.substring(start + balanceStart.length(), finish).trim();
+
+        val start = text.indexOf(balanceStart);
+        val finish = text.lastIndexOf(balanceFinish);
+        val value = text.substring(start + balanceStart.length(), finish);
         return Integer.parseInt(value);
     }
 
