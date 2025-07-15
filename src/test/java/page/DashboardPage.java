@@ -8,27 +8,23 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
 
 public class DashboardPage {
-    private SelenideElement header = $("[data-test-id=dashboard]");
+    // к сожалению, разработчики не дали нам удобного селектора, поэтому так
     private ElementsCollection cards = $$(".list__item div");
-    private String button = "[data-test-id=action-deposit]";
-    private String balanceStart = "баланс:";
-    private String balanceFinish = " р.";
+    private final String balanceStart = "баланс: ";
+    private final String balanceFinish = " р.";
 
     public DashboardPage() {
-        header.shouldBe(visible);
     }
 
-    public int extractBalance(String text) {
-        String cardValue = cards.get(Integer.parseInt(text)).text();
-        val start = cardValue.indexOf(balanceStart);
-        val finish = cardValue.lastIndexOf(balanceFinish);
-        val value  = cardValue.substring(start + balanceStart.length(), finish).trim();
+    public int getCardBalance(String id) {
+
+        return extractBalance(text);
+    }
+
+    private int extractBalance(String text) {
+        var start = text.indexOf(balanceStart);
+        var finish = text.indexOf(balanceFinish);
+        var value = text.substring(start + balanceStart.length(), finish);
         return Integer.parseInt(value);
-    }
-
-    public TransferPage pressReplCard(int index) {
-        SelenideElement buttonReplCard = cards.get(index).find(button);
-        buttonReplCard.click();
-        return new TransferPage();
     }
 }
