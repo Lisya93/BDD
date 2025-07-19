@@ -1,15 +1,14 @@
 plugins {
     id 'java'
-    //подключаем плагин lombok но нужен еще плагин в IDEA
-    //id 'io.freefair.lombok' version '8.2.2'
+    id 'io.freefair.lombok' version '6.6.3' // Версия, совместимая с Java 11
 }
 
 group 'ru.netology'
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = 11
+targetCompatibility = 11
 
-// кодировка файлов (если используете русский язык в файлах)
 compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
 
@@ -18,25 +17,32 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
+    // Selenide с учетом совместимости для Java 11
+    testImplementation 'com.codeborne:selenide:6.17.2' // Последняя стабильная для Java 11
 
-    // библиотека com.codeborne:selenide используется при построении проекта с использованием Selenide
-    testImplementation 'com.codeborne:selenide:6.17.2'
+    // JUnit 5
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.3'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
 
-    //подключаем библиотеку Faker
+    // Faker
     testImplementation 'com.github.javafaker:javafaker:1.0.2'
 
-    //подключаем зависимости lombok
-    testCompileOnly 'org.projectlombok:lombok:1.18.24'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.28'
+    annotationProcessor 'org.projectlombok:lombok:1.18.28'
+    testCompileOnly 'org.projectlombok:lombok:1.18.28'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.28'
 
+    // Логирование для тестов
+    testImplementation 'org.slf4j:slf4j-simple:2.0.7'
 }
 
 test {
     useJUnitPlatform()
-    // в тестах, вызывая `gradlew test -Dselenide.headless=true` будем передавать этот параметр в JVM (где его подтянет Selenide)
-    // свойство selenide.headless используется в проектах на основе Selenide для передачи значения параметра в JVM
-    systemProperty 'selenide.headless', System.getProperty('selenide.headless')
-    // свойство chromeoptions.prefs используется для задания настроек браузера в проектах на основе Selenide, выключаем менеджер паролей
-    systemProperty 'chromeoptions.prefs', System.getProperty('chromeoptions.prefs', "profile.password_manager_leak_detection=false")
+    systemProperty 'selenide.headless', System.getProperty('selenide.headless', 'false')
+    systemProperty 'chromeoptions.prefs', 'profile.password_manager_leak_detection=false'
+
+    // Настройки для стабильной работы с Java 11
+    systemProperty 'selenide.browser', 'chrome'
+    systemProperty 'selenide.timeout', '10000'
 }

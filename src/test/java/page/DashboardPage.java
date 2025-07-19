@@ -1,24 +1,49 @@
 package page;
 
+
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-import lombok.val;
+import data.DataHelper;
 
 import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$$;
 
 public class DashboardPage {
-    // к сожалению, разработчики не дали нам удобного селектора, поэтому так
-    private ElementsCollection cards = $$(".list__item div");
-    private final String balanceStart = "баланс: ";
-    private final String balanceFinish = " р.";
+    private final String balanceStart = "баланс: "; // Оригинальная строка с опечаткой
+    private final String balanceFinish = " p.";
+    private final SelenideElement heading = $("[data-test-id=dashboard]");
+    private final ElementsCollection cards = $$(".list__item div");
+    private final SelenideElement reloadButton = $("[data-test-id='action-reload']");
 
     public DashboardPage() {
+        heading.shouldBe(visible);
     }
 
-    public int getCardBalance(String id) {
-
+    public int getCardBalance(DataHelper.CardInfo cardInfo) {
+        var text = getCard(cardInfo).getText();
         return extractBalance(text);
+    }
+
+
+    // public int getCardBalance(int index) {
+    // var text = cards.get(index).getText();
+    // return extractBalance(text);
+    //
+
+    public TransferPage selectedCardToTransfer(DataHelper.CardInfo cardInfo) {
+        getCard(cardInfo).$("button").click();
+        return new TransferPage();
+    }
+
+    private SelenideElement getCard(DataHelper.CardInfo cardInfo) {
+        return cards.findBy(Condition.attribute("data-test-id", cardInfo.getTestId()));
+    }
+
+    public void reloadDashboardPage() {
+        reloadButton.click();
+        heading.shouldBe(visible);
     }
 
     private int extractBalance(String text) {
