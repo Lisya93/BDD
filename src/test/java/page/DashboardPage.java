@@ -26,13 +26,21 @@ public class DashboardPage {
         return extractBalance(text);
     }
 
+    public void checkCardBalance(DataHelper.CardInfo cardInfo, int expectedBalance) {
+        int actualBalance = getCardBalance(cardInfo);
+        if (actualBalance != expectedBalance) {
+            throw new AssertionError("Баланс карты " + cardInfo.getCardNumber() +
+                    " должен быть " + expectedBalance +
+                    ", но был " + actualBalance);
+        }
+    }
 
     // public int getCardBalance(int index) {
     // var text = cards.get(index).getText();
     // return extractBalance(text);
     //
 
-    public TransferPage selectedCardToTransfer(DataHelper.CardInfo cardInfo) {
+    public TransferPage selectCardToTransfer(DataHelper.CardInfo cardInfo) {
         getCard(cardInfo).$("button").click();
         return new TransferPage();
     }
